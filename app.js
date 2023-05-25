@@ -1,12 +1,20 @@
 const express = require("express")
+const bodyParser = require("body-parser")
 const https = require("https")
 const app = express()
+app.use(bodyParser.urlencoded({ extended: true }));
+
 
 
 app.get("/", function (req, res) {
+ res.sendFile(__dirname+"/index.html");
+})
 
-    const query ="jabalpur"
-    const url = "https://api.openweathermap.org/data/2.5/weather?q=" +query+ "&units=metric&appid=dab868a2a76d48998617885e89872fb6"
+
+app.post("/",function(req,res)
+{
+    const query=req.body.CityName;
+    const url = "https://api.openweathermap.org/data/2.5/weather?q=" + query + "&units=metric&appid=dab868a2a76d48998617885e89872fb6"
     https.get(url, function (response) {
         console.log(response.statusCode);
 
@@ -36,16 +44,16 @@ app.get("/", function (req, res) {
 
 
 
-            
-            const icon=weatherdata.weather[0].icon
-            const imageURL= "https://openweathermap.org/img/wn/"+icon+"@2x.png"
+
+            const icon = weatherdata.weather[0].icon
+            const imageURL = "https://openweathermap.org/img/wn/" + icon + "@2x.png"
 
 
 
             // res.send("<h1>temperature in london is"+temp+"celcius degrees </h1>")//now if we have to send multiple lines then we will use res.write mulitpletimes and then lastly res.send
-            res.write("<p> weather description in london is " + weatherDescription + "</p>")
-            res.write("<h1>temperature in london is" + temp + " celcius degrees </h1>")
-            res.write("<img src="+ imageURL+"></img>")
+            res.write("<p> weather description in "+ query +" is " + weatherDescription + "</p>")
+            res.write("<h1>temperature in "+ query +" is " + temp + " celcius degrees </h1>")
+            res.write("<img src=" + imageURL + "></img>")
 
             res.send()
 
@@ -61,8 +69,9 @@ app.get("/", function (req, res) {
 
         })
     })
-
 })
+
+
 
 
 app.listen(3000, function () {
